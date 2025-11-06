@@ -8,7 +8,7 @@ function generateRegexPatterns(keywords, replacementText) {
         const regex = kw.split('').map(c => `[${c.toUpperCase()}${c.toLowerCase()}]`).join('');
         return `regex:${regex}==>${replacementText}`;
     }).join('\n');
-}   
+}
 
 // Main function
 export function runTool(githubRepoName, keywords, replacementText) {
