@@ -33,3 +33,14 @@ Options:
   -t, --replacement <replacement>  Replacement text
   -h, --help                       display help for command
 ```
+
+## Running on multiple repos
+If you want to run this on all your GitHub repositories, you first need to get a list of all your repos : 
+```shell
+gh repo list -L 1000 --no-archived --jq "[.[] | .name]" --json name | cat
+```
+
+And then modify the run-tool.js script, afterwards simply type
+```shell
+node run-tool.js
+```
