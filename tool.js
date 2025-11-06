@@ -61,6 +61,7 @@ export function runTool(githubRepoName, keywords, replacementText) {
         commit.author_email = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.author_email)
         commit.committer_name = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.committer_name)
         commit.committer_email = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.committer_email)
+        commit.message = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.message)
     return commit`
 
     const refname_callback_py = `
