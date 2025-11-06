@@ -2,12 +2,14 @@ import shell from 'shelljs';
 import fs from 'fs';
 import path from 'path';
 
-// Generate regex patterns for replacements.txt
 function generateRegexPatterns(keywords, replacementText) {
     return keywords.map(kw => {
         const regex = kw.split('').map(c => `[${c.toUpperCase()}${c.toLowerCase()}]`).join('');
         return `regex:${regex}==>${replacementText}`;
     }).join('\n');
+}
+function escapeQuotes(str) {
+    return str.replace(/"/g, '\\"');
 }
 
 // Main function
@@ -36,7 +38,24 @@ export function runTool(githubRepoName, keywords, replacementText) {
 
     // Apply git filter-repo
     console.log("Applying git filter-repo...");
-    shell.exec('git filter-repo --sensitive-data-removal --force --replace-text ../replacements.txt');
+    const commit_callback_py = `
+    keywords = [kw.strip() for kw in "${escapeQuotes(keywords.join(","))}".split(",")]
+    for keyword in keywords:
+        kw_regex = re.compile(re.escape(str.encode(keyword)), re.IGNORECASE)
+        commit.author_name = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.author_name)
+        commit.author_email = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.author_email)
+        commit.committer_name = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.committer_name)
+        commit.committer_email = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.committer_email)
+        commit.message = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.message)
+    return commit`
+    const filterRepoRes = shell.cmd(
+        'git', 'filter-repo',
+        '--sensitive-data-removal', '--force',
+        '--replace-text', '../replacements.txt',
+        '--commit-callback', commit_callback_py
+    );
+    console.log(filterRepoRes.stdout);
+    console.error(filterRepoRes.stderr);
 
     // Add remote and force push
     shell.exec(`git remote add origin git@github.com:${githubRepoName}.git`);
