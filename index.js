@@ -70,6 +70,7 @@ function mainCLI() {
 // Run the appropriate mode
 if (program.args.length > 0 || Object.keys(program.opts()).length > 0) {
     mainCLI();
+    process.exit(0);
 } else {
     await mainInteractive();
 }
