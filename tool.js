@@ -55,14 +55,38 @@ export function runTool(githubRepoName, keywords, replacementText) {
     
     const commit_callback_py = `
     ${py_getKeywords}
+    modified_commit = False
     for keyword in keywords:
         ${py_createKeywordRegex}
-        commit.author_name = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.author_name)
-        commit.author_email = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.author_email)
-        commit.committer_name = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.committer_name)
-        commit.committer_email = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.committer_email)
-        commit.message = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.message)
-    return commit`
+
+        new_author_name = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.author_name)
+        if new_author_name != commit.author_name:
+            modified_commit = True
+            commit.author_name = new_author_name
+
+        new_author_email = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.author_email)
+        if new_author_email != commit.author_email:
+            modified_commit = True
+            commit.author_email = new_author_email
+
+        new_committer_name = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.committer_name)
+        if new_committer_name != commit.committer_name:
+            modified_commit = True
+            commit.committer_name = new_committer_name
+
+        new_committer_email = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.committer_email)
+        if new_committer_email != commit.committer_email:
+            modified_commit = True
+            commit.committer_email = new_committer_email
+
+        new_message = kw_regex.sub(b"${escapeQuotes(replacementText)}", commit.message)
+        if new_message != commit.message:
+            modified_commit = True
+            commit.message = new_message
+
+    # We check if commit is modified, if its not we leave it be, this is to not add a "commiter" and an "author"
+    if modified_commit:
+        return commit`
 
     const refname_callback_py = `
     ${py_getKeywords}
