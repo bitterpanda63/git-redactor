@@ -1,0 +1,16 @@
+{
+  "name": "git-redactor",
+  "version": "1.0.0",
+  "description": "Redact your darkest secrets",
+  "main": "index.js",
+  "scripts": {
+  },
+  "keywords": [],
+  "author": "bitterpanda63",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "commander": "^14.0.2",
+    "shelljs": "^0.10.0"
+  }
+}
