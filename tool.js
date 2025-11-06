@@ -48,6 +48,9 @@ export function runTool(githubRepoName, keywords, replacementText) {
     // Apply git filter-repo
     /// python re-usable code snippets
     console.log("Applying git filter-repo...");
+
+    shell.exec("git filter-repo --replace-text ../replacements.txt --replace-message ../replacements.txt --sensitive-data-removal --force");
+
     const py_getKeywords = `
     keywords = [kw.strip() for kw in "${escapeQuotes(keywords.join(","))}".split(",")]`.trim()
     const py_createKeywordRegex = `
@@ -102,17 +105,16 @@ export function runTool(githubRepoName, keywords, replacementText) {
         filename = kw_regex.sub(b"${sanitizeReplacementText(replacementText)}", filename)
     return filename`
 
-    const filterRepoRes = shell.cmd(
+    const filterWithCallbacks = shell.cmd(
         'git', 'filter-repo',
         '--sensitive-data-removal', '--force',
-        '--replace-text', '../replacements.txt',
-        '--replace-message', '../replacements.txt',
         '--commit-callback', commit_callback_py,
         '--refname-callback', refname_callback_py,
         '--filename-callback', filename_callback_py
     );
-    console.log(filterRepoRes.stdout);
-    console.error(filterRepoRes.stderr);
+    console.log(filterWithCallbacks.stdout);
+    console.error(filterWithCallbacks.stderr);
+
 
     // Add remote and force push
     shell.exec(`git remote add origin git@github.com:${githubRepoName}.git`);
