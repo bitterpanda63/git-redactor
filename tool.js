@@ -66,7 +66,6 @@ export function runTool(githubRepoName, keywords, replacementText) {
     const refname_callback_py = `
     ${py_getKeywords}
     for keyword in keywords:
-        print(refname)
         ${py_createKeywordRegex}
         refname = kw_regex.sub(b"${sanitizeReplacementText(replacementText)}", refname)
     return refname`
