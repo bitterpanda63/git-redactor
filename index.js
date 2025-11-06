@@ -1,7 +1,7 @@
-import { runTool } from "./tool.js";
+import {runTool} from "./tool.js";
 import readline from 'readline';
-import { Command } from 'commander';
-import { readFileSync } from 'fs';
+import {Command} from 'commander';
+import {readFileSync} from 'fs';
 
 // Read package.json to get the version
 const packageJson = JSON.parse(readFileSync("./package.json", {encoding: 'utf-8'}));
@@ -21,6 +21,7 @@ const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
+
 function askQuestion(question) {
     return new Promise((resolve) => {
         rl.question(question, (answer) => {
